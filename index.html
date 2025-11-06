@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de CV con IA</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>Tu Asistente de CV Inteligente</h1>
+    </header>
+
+    <main id="wizard-container">
+
+        <section id="step-template" class="wizard-step active">
+            <h2>Paso 1: Elige tu Plantilla</h2>
+            <div class="template-options">
+                
+                <div class="template-card">
+                    <h3>Plantilla Moderna</h3>
+                    
+                    <p>Un diseño limpio y minimalista, ideal para sectores tecnológicos y creativos.</p>
+                    <button class="select-template-btn" data-template="moderna">Seleccionar</button>
+                </div>
+
+                <div class="template-card">
+                    <h3>Plantilla Clásica</h3>
+                    
+                    <p>Un formato cronológico tradicional, perfecto para sectores corporativos y académicos.</p>
+                    <button class="select-template-btn" data-template="clasica">Seleccionar</button>
+                </div>
+                
+                <div class="template-card">
+                    <h3>Formato Europeo (Europass)</h3>
+                    
+                    <p>El formato estándar europeo, ideal para la movilidad y el reconocimiento en la UE.</p>
+                    <button class="select-template-btn" data-template="europea">Seleccionar</button>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="step-personal" class="wizard-step" hidden>
+            <h2>Paso 2: Datos Personales</h2>
+            
+           <div class="form-group" id="foto-opcion-group">
+                <label>¿Quieres incluir una foto en tu CV?</label>
+                <div id="foto-opcion-container">
+                    <div class="opcion-radio">
+                        <input type="radio" id="foto-opcion-no" name="foto-opcion" value="no" checked>
+                        <label for="foto-opcion-no">No</label>
+                    </div>
+                    <div class="opcion-radio">
+                        <input type="radio" id="foto-opcion-si" name="foto-opcion" value="si">
+                        <label for="foto-opcion-si">Sí (usar marcador)</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="nombre">Nombre Completo:</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Ej: Ana García López">
+            </div>
+
+            <div class="form-group">
+                <label for="puesto">Puesto o Título Principal:</label>
+                <input type="text" id="puesto" name="puesto" placeholder="Ej: Docente de Informática">
+            </div>
+            
+            <div class="form-group">
+                <label for="resumen">Resumen de Perfil (Opcional):</label>
+                <textarea id="resumen" name="resumen" rows="4" placeholder="Ej: Profesional de marketing con 5 años de experiencia..."></textarea>
+            </div>
+
+            <h3>Datos de Contacto</h3>
+            <small class="form-hint">Debes rellenar al menos un campo (teléfono o email).</small>
+            
+            <div class="form-group">
+                <label for="telefono">Teléfono (Opcional):</label>
+                <input type="tel" id="telefono" name="telefono">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email (Opcional):</label>
+                <input type="email" id="email" name="email">
+            </div>
+            
+            <div class="form-group">
+                <label for="linkedin">Perfil de LinkedIn (Opcional):</label>
+                <input type="text" id="linkedin" name="linkedin" placeholder="Ej: linkedin.com/in/tu-perfil">
+            </div>
+
+            <div class="form-group">
+                <label for="otro_enlace">Otro enlace (YouTube, GitHub, etc.) (Opcional):</label>
+                <input type="text" id="otro_enlace" name="otro_enlace" placeholder="Ej: youtube.com/@tu-canal">
+            </div>
+            
+            <div class="navigation-buttons">
+                <button type="button" class="prev-step-btn">Anterior</button>
+                <button type="button" class="next-step-btn">Siguiente</button>
+            </div>
+        </section>
+
+        <section id="step-experience" class="wizard-step" hidden>
+            <h2>Paso 3: Experiencia Laboral</h2>
+            <p>Añade tus trabajos anteriores, empezando por el más reciente.</p>
+
+            <div id="experience-list">
+                </div>
+
+            <div id="experience-form" class="dynamic-form">
+                <div class="form-group">
+                    <label for="exp_puesto">Puesto:</label>
+                    <input type="text" id="exp_puesto" name="exp_puesto">
+                </div>
+                <div class="form-group">
+                    <label for="exp_empresa">Empresa:</label>
+                    <input type="text" id="exp_empresa" name="exp_empresa">
+                </div>
+                <div class="form-group">
+                    <label for="exp_inicio">Fecha Inicio:</label>
+                    <input type="text" id="exp_inicio" name="exp_inicio" placeholder="Ej: Enero 2020 o solo 2020">
+                </div>
+                <div class="form-group">
+                    <label for="exp_fin">Fecha Fin:</label>
+                    <input type="text" id="exp_fin" name="exp_fin" placeholder="Ej: Presente o Marzo 2022">
+                </div>
+                
+                <div class="form-group">
+                    <label for="exp_descripcion">Logros o Descripción (Opcional):</label>
+                    <textarea id="exp_descripcion" name="exp_descripcion" rows="4" placeholder="Ej: Desarrollo de contenidos e-learning.&#10;Ej: Creación de recursos multimedia."></textarea>
+                </div>
+
+                <button type="button" id="add-experience-btn">Añadir este trabajo</button>
+            </div>
+
+            <div class="navigation-buttons">
+                <button type="button" class="prev-step-btn">Anterior</button>
+                <button type="button" class="next-step-btn">Siguiente</button>
+            </div>
+        </section>
+
+        <section id="step-education" class="wizard-step" hidden>
+            <h2>Paso 4: Formación</h2>
+            <p>Añade tus títulos académicos.</p>
+
+            <div id="education-list"></div>
+            
+            <div id="education-form" class="dynamic-form">
+                <div class="form-group">
+                    <label for="edu_titulo">Título:</label>
+                    <input type="text" id="edu_titulo" name="edu_titulo">
+                </div>
+                <div class="form-group">
+                    <label for="edu_institucion">Institución:</label>
+                    <input type="text" id="edu_institucion" name="edu_institucion">
+                </div>
+                <div class="form-group">
+                    <label for="edu_anio">Año de Obtención:</label>
+                    <input type="text" id="edu_anio" name="edu_anio" placeholder="Ej: 2019">
+                </div>
+                <button type="button" id="add-education-btn">Añadir formación</button>
+            </div>
+
+            <div class="navigation-buttons">
+                <button type="button" class="prev-step-btn">Anterior</button>
+                <button type="button" class="next-step-btn">Siguiente</button>
+            </div>
+        </section>
+
+        <section id="step-skills" class="wizard-step" hidden>
+            <h2>Paso 5: Datos de Interés</h2>
+
+            <div class="form-group">
+                <label for="aptitudes">Aptitudes (Soft Skills) (Opcional):</label>
+                <textarea id="aptitudes" name="aptitudes" placeholder="Ej: Trabajo en equipo y bajo presión&#10;Ej: Iniciativa y capacidad De Adaptación"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="conocimientos">Conocimientos (Hard Skills) (Opcional):</label>
+                <textarea id="conocimientos" name="conocimientos" placeholder="Ej: S.O: Windows, Linux&#10;Ej: Lenguajes: HTML, CSS, JS"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="idiomas">Idiomas (Opcional):</label>
+                <textarea id="idiomas" name="idiomas" placeholder="Ej: Inglés (Técnico), Francés (B2)"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="intereses">Otros datos (Carnet, etc.) (Opcional):</label>
+                <textarea id="intereses" name="intereses" placeholder="Ej: Carnet de conducir B, C, C+E&#10;Ej: Vehículo propio"></textarea>
+            </div>
+
+            <div class="navigation-buttons">
+                <button type="button" class="prev-step-btn">Anterior</button>
+                <button type="button" id="generate-draft-btn">Generar Borrador</button>
+            </div>
+        </section>
+
+       <section id="step-draft" class="wizard-step" hidden>
+            <h2>Paso 6: Revisa tu Borrador</h2>
+            
+            <div class="form-group" id="color-picker-group">
+                <label for="color-picker">Personaliza el color de acento:</label>
+                <input type="color" id="color-picker" value="#CC0000"> 
+            </div>
+
+            <div id="loading-spinner" hidden>Cargando...</div>
+
+            <div id="draft-output" class="cv-preview"></div>
+
+            <div class="navigation-buttons">
+                <button type="button" id="edit-data-btn">Modificar Datos</button>
+                <button type="button" id="confirm-download-btn">Confirmar y Descargar</button>
+            </div>
+
+            <div id="final-photo-step" class="dynamic-form" hidden>
+                <h3>¡Último paso!</h3>
+                <p>Si deseas reemplazar la foto de marcador, súbela ahora. Si no, simplemente genera el PDF.</p>
+                
+                <div class="form-group">
+                    <label for="final-photo-upload">Sube tu foto (opcional):</label>
+                    <input type="file" id="final-photo-upload" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="pdf-filename">Nombre del archivo:</label>
+                    <input type="text" id="pdf-filename" placeholder="CV_TuNombre.pdf">
+                </div>
+
+                <button type="button" id="generate-pdf-btn">Generar PDF</button>
+            </div>
+        </section>
+        
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Francisco José Rueda Fernández</p>
+    </footer>
+    
+    <script src="app.js"></script>
+
+</body>
+</html>
