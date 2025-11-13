@@ -156,6 +156,11 @@ button.prev-step-btn:hover {
     padding: 1.5rem;
     text-align: center;
     box-shadow: var(--sombra-tarjeta);
+
+    /* --- ¡NUEVAS LÍNEAS! --- */
+    display: flex;            /* Activa Flexbox */
+    flex-direction: column;   /* Apila los elementos verticalmente */
+    justify-content: flex-start; /* Alinea todo arriba (por si acaso) */
 }
 
 .template-card h3 {
@@ -167,6 +172,16 @@ button.prev-step-btn:hover {
 }
 .template-card button {
     width: 100%;
+}
+
+.template-card {
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--sombra-tarjeta);
+    display: flex;
+    flex-direction: column; /* Para que ponga las cosas una encima de otra */
 }
 
 
@@ -266,4 +281,22 @@ button.prev-step-btn:hover {
     margin-top: 2rem;
     border-top: 1px solid var(--color-borde);
     padding-top: 1.5rem;
+}
+
+/* --- Estilos para las Vistas Previas de Plantillas --- */
+
+.template-card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1.41; /* Proporción de A4 (vertical) */
+    object-fit: cover; /* Recorta la imagen para que encaje sin deformarse */
+    border: 1px solid var(--color-borde);
+    border-radius: 4px;
+    margin-bottom: 1rem; /* Espacio entre la imagen y el título */
+}
+
+.template-card button {
+    margin-top: auto; /* ¡Esta es la línea mágica que ancla el botón abajo! */
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
 }
