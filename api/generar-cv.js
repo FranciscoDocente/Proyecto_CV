@@ -28,7 +28,7 @@ export default async function handler(request, response) {
             // Opción SÍ: Reemplazamos el marcador por la FOTO ESTÁNDAR
             templateContent = templateContent.replace(
                 '[FOTO_DEL_USUARIO]', 
-                '![Foto de perfil](/foto-estandar.png)' // Vercel sabrá dónde está este archivo
+                '![Foto de perfil](/img/foto-estandar.png)' // Vercel sabrá dónde está este archivo
             );
         } else {
             // Opción NO: Simplemente borramos el marcador
