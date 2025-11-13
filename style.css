@@ -156,8 +156,6 @@ button.prev-step-btn:hover {
     padding: 1.5rem;
     text-align: center;
     box-shadow: var(--sombra-tarjeta);
-
-    /* --- ¡NUEVAS LÍNEAS! --- */
     display: flex;            /* Activa Flexbox */
     flex-direction: column;   /* Apila los elementos verticalmente */
     justify-content: flex-start; /* Alinea todo arriba (por si acaso) */
@@ -173,17 +171,6 @@ button.prev-step-btn:hover {
 .template-card button {
     width: 100%;
 }
-
-.template-card {
-    border: 1px solid var(--color-borde);
-    border-radius: var(--radio-borde);
-    padding: 1.5rem;
-    text-align: center;
-    box-shadow: var(--sombra-tarjeta);
-    display: flex;
-    flex-direction: column; /* Para que ponga las cosas una encima de otra */
-}
-
 
 /* b) Listas de Experiencia / Formación (Títulos en rojo) */
 .dynamic-form {

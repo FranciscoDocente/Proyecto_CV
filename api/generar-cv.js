@@ -1,7 +1,12 @@
-// --- api/generar-cv.js (Versión Final 3) ---
+// --- api/generar-cv.js (Versión 4 - ¡CORREGIDA!) ---
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from 'fs';
 import path from 'path';
+// *** NUEVO: Importamos las herramientas para encontrar la ruta ***
+import { fileURLToPath } from 'url';
+
+// *** NUEVO: Esta es la forma moderna y robusta de encontrar el directorio ***
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -12,30 +17,29 @@ export default async function handler(request, response) {
     }
 
     try {
-        // 4. RECIBIR DATOS (incluyendo 'fotoOpcion')
         const cvData = request.body;
         console.log(`[Backend] Plantilla: ${cvData.template}, Foto: ${cvData.personal.fotoOpcion}`);
 
-        // 5. LEER EL ARCHIVO DE PLANTILLA
+        // 5. LEER EL ARCHIVO DE PLANTILLA (¡CON LA RUTA CORREGIDA!)
         const templateFileName = `${cvData.template}.md`;
-        const templatePath = path.join(process.cwd(), 'plantillas', templateFileName);
+        
+        // *** MODIFICADO: Esta es la ruta correcta ***
+        // Sube un nivel desde 'api' (donde vive este .js) y entra a 'plantillas'
+        const templatePath = path.join(__dirname, '..', 'plantillas', templateFileName);
+        
         let templateContent = fs.readFileSync(templatePath, 'utf8');
 
-        // 6. *** ¡LA LÓGICA DE LA FOTO QUE HAS PEDIDO! ***
-        // Modificamos la plantilla ANTES de enviarla a la IA.
-        
+        // 6. LÓGICA DE LA FOTO (Sin cambios)
         if (cvData.personal.fotoOpcion === 'si') {
-            // Opción SÍ: Reemplazamos el marcador por la FOTO ESTÁNDAR
             templateContent = templateContent.replace(
                 '[FOTO_DEL_USUARIO]', 
-                '![Foto de perfil](/img/foto-estandar.png)' // Vercel sabrá dónde está este archivo
+                '![Foto de perfil](/img/foto-estandar.png)'
             );
         } else {
-            // Opción NO: Simplemente borramos el marcador
             templateContent = templateContent.replace('[FOTO_DEL_USUARIO]', '');
         }
 
-        // 7. CONSTRUIR EL "PROMPT MAESTRO" (Ahora con la plantilla ya modificada)
+        // 7. CONSTRUIR EL "PROMPT MAESTRO" (Sin cambios)
         const prompt = `
             Eres un asistente experto en creación de CVs. Tu tarea es tomar los datos del usuario 
             y rellenar la plantilla proporcionada.
@@ -63,7 +67,7 @@ export default async function handler(request, response) {
             ### CV GENERADO (Markdown):
         `;
 
-        // 8. LLAMAR A LA IA
+        // 8. LLAMAR A LA IA (Sin cambios)
         console.log('[Backend] Contactando a la API de Gemini...');
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(prompt);
@@ -72,13 +76,14 @@ export default async function handler(request, response) {
 
         console.log('[Backend] IA ha respondido. Enviando al frontend.');
 
-        // 9. DEVOLVER EL CV TERMINADO
+        // 9. DEVOLVER EL CV TERMINADO (Sin cambios)
         return response.status(200).json({ 
             draft: generatedDraft 
         });
 
     } catch (error) {
-        console.error('[Backend] Error al contactar la IA:', error);
+        // ¡Esta es la sección que nos dará el error 500!
+        console.error('[Backend] ¡ERROR GRAVE!:', error); // Esto lo veremos en los logs de Vercel
         return response.status(500).json({ message: 'Error interno del servidor', details: error.message });
     }
 }
