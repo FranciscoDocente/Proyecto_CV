@@ -1,4 +1,4 @@
-// --- app.js (Versión 7.1 - ¡COMPLETA Y CORREGIDA!) ---
+// --- app.js (Versión 8 - ¡AHORA SÍ, COMPLETO!) ---
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const expEmpresa = document.getElementById('exp_empresa');
     const expInicio = document.getElementById('exp_inicio');
     const expFin = document.getElementById('exp_fin');
+    const expPresente = document.getElementById('exp_presente'); // Checkbox "presente"
     const expDescripcion = document.getElementById('exp_descripcion');
     const addEducationBtn = document.getElementById('add-education-btn');
     const educationList = document.getElementById('education-list');
@@ -54,12 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return re.test(telefono) && digitos >= 6;
     }
 
-    // --- 4. FUNCIÓN DE NAVEGACIÓN ---
+    // --- 4. FUNCIÓN DE NAVEGACIÓN (CON SCROLL) ---
     function showStep(stepId) {
         steps.forEach(step => {
             step.id === stepId ? step.removeAttribute('hidden') : step.setAttribute('hidden', true);
         });
-        window.scrollTo(0, 0);
+        // Arreglo del "engorro" de tener que subir
+        window.scrollTo(0, 0); 
     }
 
     // --- 5. FUNCIONES DE RENDERIZADO DE LISTAS ---
@@ -70,11 +72,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         cvData.experience.forEach((exp, index) => {
+            // Formateamos las fechas de YYYY-MM-DD a dd/mm/aaaa (español)
+            const inicioFmt = exp.inicio ? new Date(exp.inicio).toLocaleDateString('es-ES') : '';
+            const finFmt = exp.esPresente ? 'Presente' : (exp.fin ? new Date(exp.fin).toLocaleDateString('es-ES') : '');
+
             const descriptionHTML = exp.descripcion ? `<p class="item-description">${exp.descripcion.replace(/\n/g, '<br>')}</p>` : '';
             const itemHTML = `
                 <div class="list-item" data-index="${index}">
                     <strong>${exp.puesto}</strong> en ${exp.empresa}
-                    <span>(${exp.inicio} - ${exp.fin})</span>
+                    <span>(${inicioFmt} - ${finFmt})</span>
                     ${descriptionHTML}
                 </div>`;
             experienceList.innerHTML += itemHTML;
@@ -99,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 6. EVENT LISTENERS ---
 
-    // a) Botones de Plantilla (¡Este es el que fallaba!)
+    // a) Botones de Plantilla
     templateButtons.forEach(button => {
         button.addEventListener('click', () => {
             cvData.template = button.dataset.template;
@@ -166,85 +172,105 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // d) Botón "Añadir Experiencia" (¡CON VALIDACIÓN DE FECHAS FUTURAS!)
+    // Listener para el checkbox "Presente"
+    expPresente.addEventListener('change', () => {
+        if (expPresente.checked) {
+            expFin.disabled = true;
+            expFin.value = '';
+        } else {
+            expFin.disabled = false;
+        }
+    });
+
+    // d) Botón "Añadir Experiencia" (Con validación de fecha)
     addExperienceBtn.addEventListener('click', () => {
         const puesto = expPuesto.value.trim();
         const empresa = expEmpresa.value.trim();
         
-        // 1. Validación de campos obligatorios
         if (puesto === '' || empresa === '') {
             alert('Por favor, rellena al menos el puesto y la empresa.');
             return;
         }
 
-        let inicioStr = expInicio.value.trim();
-        let finStr = expFin.value.trim();
+        const inicioValue = expInicio.value; // "2024-11-15"
+        const finValue = expFin.value;     // "2025-11-15"
+        const esPresente = expPresente.checked;
         const descripcion = expDescripcion.value.trim();
 
-        // 2. *** ¡NUEVA VALIDACIÓN DE FECHAS! ***
-        const currentYear = new Date().getFullYear();
-        const inicioNum = parseInt(inicioStr);
-        const finNum = parseInt(finStr);
-
-        // 2a. Comprobar si la fecha de fin es futura
-        if (!isNaN(finNum) && finNum > currentYear) {
-            // ¡Usamos confirm() como sugeriste!
-            const fix = confirm(
-                `La fecha de fin ("${finNum}") no puede ser en el futuro.\n\n` +
-                `Pulsa "Aceptar" para cambiarla por "En la actualidad".\n` +
-                `Pulsa "Cancelar" para corregirla manualmente.`
-            );
-            
-            if (fix) {
-                // El usuario pulsa Aceptar
-                finStr = "En la actualidad"; // Corregimos el valor
-                expFin.value = "En la actualidad"; // Lo ponemos en el campo
-            } else {
-                // El usuario pulsa Cancelar
-                expFin.focus(); // Ponemos el cursor en el campo erróneo
-                return; // Detenemos la ejecución
-            }
+        if (inicioValue === '') {
+            alert('Por favor, introduce una fecha de inicio.');
+            expInicio.focus();
+            return;
+        }
+        
+        const inicioDate = new Date(inicioValue);
+        const hoy = new Date();
+        
+        if (inicioDate > hoy) {
+            alert('Error: La fecha de inicio no puede ser en el futuro.');
+            expInicio.focus();
+            return;
         }
 
-        // 2b. Comprobar si la fecha de inicio es posterior a la de fin
-        if (inicioStr !== "" && finStr !== "" && !isNaN(inicioNum) && !isNaN(finNum)) {
-            if (inicioNum > finNum) {
-                alert('Error: El año de inicio no puede ser posterior al año de fin.');
+        if (!esPresente) {
+            const finDate = new Date(finValue);
+            if (finValue === '') {
+                alert('Por favor, introduce una fecha de fin o marca "Sigo trabajando aquí".');
+                expFin.focus();
+                return;
+            }
+            if (finDate > hoy) {
+                alert('Error: La fecha de fin no puede ser en el futuro.');
+                expFin.focus();
+                return;
+            }
+            if (inicioDate > finDate) {
+                alert('Error: La fecha de inicio no puede ser posterior a la fecha de fin.');
                 expInicio.focus();
                 return;
             }
         }
         
-        // 3. Si todo es válido, guardamos
         cvData.experience.push({ 
             puesto, 
             empresa, 
-            inicio: inicioStr, 
-            fin: finStr, 
+            inicio: inicioValue, 
+            fin: esPresente ? null : finValue, 
+            esPresente: esPresente,
             descripcion 
         });
         
-        // 4. Renderizar y limpiar
         renderExperienceList();
         expPuesto.value = ''; 
         expEmpresa.value = ''; 
         expInicio.value = ''; 
         expFin.value = ''; 
+        expPresente.checked = false;
+        expFin.disabled = false;
         expDescripcion.value = '';
     });
 
-    // e) Botón "Añadir Formación"
+    // e) Botón "Añadir Formación" (Con validación de año)
     addEducationBtn.addEventListener('click', () => {
         const titulo = eduTitulo.value.trim();
         const institucion = eduInstitucion.value.trim();
+        const anioStr = eduAnio.value.trim();
         
-        if (titulo === '' || institucion === '') {
-            alert('Por favor, rellena al menos el título y la institución.');
+        if (titulo === '' || institucion === '' || anioStr === '') {
+            alert('Por favor, rellena todos los campos de formación.');
             return;
         }
 
-        const anio = eduAnio.value.trim();
-        cvData.education.push({ titulo, institucion, anio });
+        const anioNum = parseInt(anioStr);
+        const anioActual = new Date().getFullYear();
+
+        if (anioStr.toLowerCase() !== 'cursando' && (isNaN(anioNum) || anioNum < 1950 || anioNum > anioActual + 10)) {
+            alert('El año no es válido. Introduce un año (ej: 2024) o la palabra "Cursando".');
+            eduAnio.focus();
+            return;
+        }
+        
+        cvData.education.push({ titulo, institucion, anio: anioStr });
         renderEducationList();
         eduTitulo.value = ''; eduInstitucion.value = ''; eduAnio.value = '';
     });

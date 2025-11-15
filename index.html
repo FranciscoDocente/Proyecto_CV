@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de CV con IA</title>
     <link rel="stylesheet" href="style.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
@@ -17,44 +18,44 @@
     <main id="wizard-container">
 
         <section id="step-template" class="wizard-step active">
-    <h2>Paso 1: Elige tu Plantilla</h2>
-    <div class="template-options">
+            <h2>Paso 1: Elige tu Plantilla</h2>
+            <div class="template-options">
+                
+                <div class="template-card">
+                    <div class="card-content">
+                        <img src="img/preview-moderna.png" alt="Vista previa de la plantilla moderna">
+                        <h3>Plantilla Moderna</h3>
+                        <p>Un diseño limpio y minimalista, ideal para sectores tecnológicos y creativos.</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="select-template-btn" data-template="moderna">Seleccionar</button>
+                    </div>
+                </div>
 
-        <div class="template-card">
-            <div class="card-content">
-                <img src="img/preview-moderna.png" alt="Vista previa de la plantilla moderna">
-                <h3>Plantilla Moderna</h3>
-                <p>Un diseño limpio y minimalista, ideal para sectores tecnológicos y creativos.</p>
-            </div>
-            <div class="card-footer">
-                <button class="select-template-btn" data-template="moderna">Seleccionar</button>
-            </div>
-        </div>
+                <div class="template-card">
+                    <div class="card-content">
+                        <img src="img/preview-clasica.png" alt="Vista previa de la plantilla clásica">
+                        <h3>Plantilla Clásica</h3>
+                        <p>Un formato cronológico tradicional, perfecto para sectores corporativos y académicos.</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="select-template-btn" data-template="clasica">Seleccionar</button>
+                    </div>
+                </div>
+                
+                <div class="template-card">
+                    <div class="card-content">
+                        <img src="img/preview-europea01.png" alt="Vista previa de la plantilla europea">
+                        <h3>Formato Europeo (Europass)</h3>
+                        <p>El formato estándar europeo, ideal para la movilidad y el reconocimiento en la UE.</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="select-template-btn" data-template="europea">Seleccionar</button>
+                    </div>
+                </div>
 
-        <div class="template-card">
-            <div class="card-content">
-                <img src="img/preview-clasica.png" alt="Vista previa de la plantilla clásica">
-                <h3>Plantilla Clásica</h3>
-                <p>Un formato cronológico tradicional, perfecto para sectores corporativos y académicos.</p>
             </div>
-            <div class="card-footer">
-                <button class="select-template-btn" data-template="clasica">Seleccionar</button>
-            </div>
-        </div>
-
-        <div class="template-card">
-            <div class="card-content">
-                <img src="img/preview-europea01.png" alt="Vista previa de la plantilla europea">
-                <h3>Formato Europeo (Europass)</h3>
-                <p>El formato estándar europeo, ideal para la movilidad y el reconocimiento en la UE.</p>
-            </div>
-            <div class="card-footer">
-                <button class="select-template-btn" data-template="europea">Seleccionar</button>
-            </div>
-        </div>
-
-    </div>
-</section>
+        </section>
 
         <section id="step-personal" class="wizard-step" hidden>
             <h2>Paso 2: Datos Personales</h2>
@@ -121,8 +122,7 @@
             <h2>Paso 3: Experiencia Laboral</h2>
             <p>Añade tus trabajos anteriores, empezando por el más reciente.</p>
 
-            <div id="experience-list">
-                </div>
+            <div id="experience-list"></div>
 
             <div id="experience-form" class="dynamic-form">
                 <div class="form-group">
@@ -133,20 +133,24 @@
                     <label for="exp_empresa">Empresa:</label>
                     <input type="text" id="exp_empresa" name="exp_empresa">
                 </div>
+                
                 <div class="form-group">
                     <label for="exp_inicio">Fecha Inicio:</label>
-                    <input type="text" id="exp_inicio" name="exp_inicio" placeholder="Ej: Enero 2020 o solo 2020">
+                    <input type="date" id="exp_inicio" name="exp_inicio">
                 </div>
                 <div class="form-group">
                     <label for="exp_fin">Fecha Fin:</label>
-                    <input type="text" id="exp_fin" name="exp_fin" placeholder="Ej: Presente o Marzo 2022">
+                    <input type="date" id="exp_fin" name="exp_fin">
+                </div>
+                <div class="form-group opcion-radio">
+                    <input type="checkbox" id="exp_presente" name="exp_presente">
+                    <label for="exp_presente">Sigo trabajando aquí (Presente)</label>
                 </div>
                 
                 <div class="form-group">
                     <label for="exp_descripcion">Logros o Descripción (Opcional):</label>
-                    <textarea id="exp_descripcion" name="exp_descripcion" rows="4" placeholder="Ej: Desarrollo de contenidos e-learning.&#10;Ej: Creación de recursos multimedia."></textarea>
+                    <textarea id="exp_descripcion" name="exp_descripcion" rows="4" placeholder="Ej: Desarrollo de contenidos e-learning."></textarea>
                 </div>
-
                 <button type="button" id="add-experience-btn">Añadir este trabajo</button>
             </div>
 
@@ -171,10 +175,12 @@
                     <label for="edu_institucion">Institución:</label>
                     <input type="text" id="edu_institucion" name="edu_institucion">
                 </div>
+                
                 <div class="form-group">
-                    <label for="edu_anio">Año de Obtención:</label>
-                    <input type="text" id="edu_anio" name="edu_anio" placeholder="Ej: 2019">
+                    <label for="edu_anio">Año de Obtención (o "Cursando"):</label>
+                    <input type="text" id="edu_anio" name="edu_anio" placeholder="Ej: 2024 o Cursando">
                 </div>
+
                 <button type="button" id="add-education-btn">Añadir formación</button>
             </div>
 
@@ -252,9 +258,3 @@
 
     <footer>
         <p>&copy; 2025 Francisco José Rueda Fernández</p>
-    </footer>
-    
-    <script src="app.js"></script>
-
-</body>
-</html>

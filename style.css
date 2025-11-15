@@ -1,17 +1,16 @@
 /* --- 1. Globales y Variables (TEMA DE FRANPROFE) --- */
 :root {
-    /* *** MODIFICADO: Tus Colores Corporativos *** */
-    --color-primario: #CC0000; /* Tu rojo corporativo, en lugar del azul */
-    --color-texto: #252525;    /* Un gris muy oscuro (casi negro) para texto */
+    --color-primario: #CC0000; /* Tu rojo corporativo */
+    --color-texto: #252525;
     --color-texto-secundario: #5f6368;
-    --color-fondo: #f8f9fa;    /* Un gris muy claro para el fondo */
+    --color-fondo: #f8f9fa;
     --color-superficie: #ffffff;
     --color-borde: #e0e0e0;
     --radio-borde: 8px;
     --sombra-tarjeta: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-/* Reseteo básico y tipografía */
+/* --- 2. Reseteo Básico y Estructura --- */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -25,7 +24,6 @@ body {
     color: var(--color-texto);
 }
 
-/* --- 2. Estructura Principal (Header, Main, Footer) --- */
 header, footer {
     text-align: center;
     padding: 1.5rem;
@@ -65,6 +63,7 @@ main#wizard-container {
 input[type="text"],
 input[type="tel"],
 input[type="email"],
+input[type="date"],
 textarea {
     width: 100%;
     padding: 0.75rem;
@@ -72,12 +71,13 @@ textarea {
     border: 1px solid var(--color-borde);
     border-radius: var(--radio-borde);
     background-color: #fff;
+    font-family: inherit; /* Asegura que la fuente sea la misma */
 }
 
-/* *** MODIFICADO: El foco ahora es rojo *** */
 input[type="text"]:focus,
 input[type="tel"]:focus,
 input[type="email"]:focus,
+input[type="date"]:focus,
 textarea:focus {
     outline: none;
     border-color: var(--color-primario);
@@ -95,7 +95,7 @@ small.form-hint {
     display: block;
 }
 
-/* --- 4. Botones (Ahora son rojos) --- */
+/* --- 4. Botones --- */
 .navigation-buttons {
     display: flex;
     justify-content: space-between;
@@ -118,7 +118,9 @@ button {
 button.next-step-btn, 
 button#generate-draft-btn,
 button#add-experience-btn,
-button#add-education-btn {
+button#add-education-btn,
+button#generate-pdf-btn,
+.select-template-btn {
     background-color: var(--color-primario);
     color: white;
 }
@@ -126,24 +128,28 @@ button#add-education-btn {
 button.next-step-btn:hover, 
 button#generate-draft-btn:hover,
 button#add-experience-btn:hover,
-button#add-education-btn:hover {
+button#add-education-btn:hover,
+button#generate-pdf-btn:hover,
+.select-template-btn:hover {
     opacity: 0.85;
 }
 
 /* Botones Secundarios (Anterior) */
-button.prev-step-btn {
+button.prev-step-btn,
+button#edit-data-btn {
     background-color: var(--color-fondo);
     color: var(--color-texto);
     border: 1px solid var(--color-borde);
 }
 
-button.prev-step-btn:hover {
+button.prev-step-btn:hover,
+button#edit-data-btn:hover {
     background-color: #eee;
 }
 
 /* --- 5. Componentes Específicos --- */
 
-/* a) Selección de Plantilla (Títulos en rojo) */
+/* a) Selección de Plantilla (¡CORREGIDO!) */
 .template-options {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -153,28 +159,42 @@ button.prev-step-btn:hover {
 .template-card {
     border: 1px solid var(--color-borde);
     border-radius: var(--radio-borde);
-    padding: 1.5rem;
-    text-align: center;
     box-shadow: var(--sombra-tarjeta);
-
+    
+    /* ¡ARREGLO DE FLEXBOX! */
     display: flex;
     flex-direction: column;
-    /* ¡LÍNEA MODIFICADA! Esto ancla el botón (card-footer) abajo */
+    /* Esto ancla el botón (card-footer) abajo */
     justify-content: space-between; 
 }
 
-.template-card h3 {
-    color: var(--color-primario); /* Título de la tarjeta en rojo */
+/* Estilos para el contenido superior (imagen, texto) */
+.card-content {
+    padding: 1.5rem; /* Padding para el contenido */
+    text-align: center;
 }
-.template-card p {
-    color: var(--color-texto-secundario);
-    margin: 0.5rem 0 1rem;
+
+/* Estilos para el pie de página (botón) */
+.card-footer {
+    padding: 0 1.5rem 1.5rem 1.5rem; /* Padding solo abajo */
 }
-.template-card button {
+
+.card-footer button {
     width: 100%;
 }
 
-/* b) Listas de Experiencia / Formación (Títulos en rojo) */
+.template-card h3 {
+    color: var(--color-primario);
+    margin-top: 1rem; /* Espacio después de la imagen */
+}
+
+.template-card p {
+    color: var(--color-texto-secundario);
+    margin: 0.5rem 0 1rem;
+    flex-grow: 1; /* Permite que el texto ocupe espacio si es necesario */
+}
+
+/* b) Listas de Experiencia / Formación */
 .dynamic-form {
     background-color: var(--color-fondo);
     padding: 1.5rem;
@@ -191,7 +211,7 @@ button.prev-step-btn:hover {
 }
 
 .list-item strong {
-    color: var(--color-primario); /* Título del puesto en rojo */
+    color: var(--color-primario);
     display: block;
     font-size: 1.1rem;
 }
@@ -204,67 +224,29 @@ button.prev-step-btn:hover {
     white-space: pre-line;
 }
 
-/* c) Borrador Final (Preview) */
-#draft-output.cv-preview {
-    border: 1px solid var(--color-borde);
-    padding: 2rem;
-    margin-top: 1.5rem;
-    background-color: #fff;
-    min-height: 200px;
-}
-
 .error-msg {
     color: #D93025; /* Un rojo de error */
     font-weight: bold;
 }
 
-/* --- 6. Responsive para Móvil (Sin cambios) --- */
-@media (max-width: 768px) {
-    main#wizard-container {
-        margin: 1rem;
-        padding: 1rem;
-    }
-
-    header h1 {
-        font-size: 1.8rem;
-    }
-
-    button {
-        padding: 0.75rem 1rem;
-    }
-
-    .navigation-buttons {
-        flex-direction: column-reverse;
-        gap: 0.75rem;
-    }
-    
-    .navigation-buttons button {
-        width: 100%;
-    }
-}
-
-/* --- 7. Componentes Específicos (Añadido) --- */
+/* --- 6. Componentes de Formulario Específicos --- */
 
 #foto-opcion-container {
-    display: flex; /* ¡La magia! Pone los elementos uno al lado del otro */
-    gap: 1.5rem;   /* Espacio entre "No" y "Sí" */
+    display: flex;
+    gap: 1.5rem;
     margin-top: 0.5rem;
 }
 
 .opcion-radio {
     display: flex;
-    align-items: center; /* Centra el botón de radio con su etiqueta */
-    gap: 0.25rem;  /* Espacio pequeño entre el botón y el texto */
+    align-items: center;
+    gap: 0.25rem;
 }
 
-/* Hacemos que la etiqueta también sea "clicable" */
 .opcion-radio label {
-    margin-bottom: 0; /* Anula el 'margin-bottom' de la regla general de 'label' */
+    margin-bottom: 0;
     font-weight: normal;
 }
-
-/* --- 7. Componentes Específicos (Añadido) --- */
-/* (Aquí va el código de #foto-opcion-container que ya tenías) */
 
 #final-photo-step {
     margin-top: 2rem;
@@ -272,26 +254,26 @@ button.prev-step-btn:hover {
     padding-top: 1.5rem;
 }
 
-/* --- Estilos para las Vistas Previas de Plantillas --- */
+/* --- 7. Vistas Previas de Plantillas (Imágenes) --- */
 
 .template-card img {
     width: 100%;
     height: auto;
-    aspect-ratio: 1 / 1.41; /* Proporción de A4 (vertical) */
-    object-fit: cover; /* Recorta la imagen para que encaje sin deformarse */
+    aspect-ratio: 1 / 1.41; /* Proporción A4 */
+    object-fit: cover;
     border: 1px solid var(--color-borde);
     border-radius: 4px;
-    margin-bottom: 1rem; /* Espacio entre la imagen y el título */
 }
 
-/* --- 9. Estilos para el Borrador (Preview) y el PDF --- */
+/* --- 8. Estilos para el Borrador (Preview) y el PDF --- */
 
-/* Esta regla le da "aire" al contenido del CV */
 .cv-preview {
     padding: 2rem;
+    background-color: #fff;
+    border: 1px solid var(--color-borde);
+    min-height: 200px;
 }
 
-/* Le decimos que use el color primario (tu rojo) para los títulos */
 .cv-preview h1,
 .cv-preview h2,
 .cv-preview h3 {
@@ -317,37 +299,61 @@ button.prev-step-btn:hover {
     font-size: 1.25rem;
 }
 
-/* Estilos para el texto normal */
 .cv-preview p,
 .cv-preview li {
     font-size: 1rem;
     line-height: 1.6;
     color: var(--color-texto);
+    white-space: pre-line; /* Respeta los saltos de línea del usuario */
 }
 
-/* Estilos para las listas (ej. experiencia, formación) */
 .cv-preview ul {
-    list-style-type: disc; /* Círculo estándar */
-    padding-left: 1.5rem; /* Añade sangría */
+    list-style-type: disc;
+    padding-left: 1.5rem;
     margin-bottom: 1rem;
 }
 
 .cv-preview li {
-    margin-bottom: 0.25rem; /* Espacio entre puntos de la lista */
+    margin-bottom: 0.25rem;
 }
 
-/* Estilos para la foto (para que se vea bien en el borrador) */
 .cv-preview img {
     max-width: 150px;
-    border-radius: 50%; /* La hace redonda */
+    height: 150px; /* Tamaño fijo */
+    border-radius: 50%; /* Redonda */
     object-fit: cover;
     display: block;
     margin-bottom: 1rem;
 }
 
-/* Línea horizontal */
 .cv-preview hr {
     border: 0;
     border-top: 2px solid var(--color-borde);
     margin: 2rem 0;
+}
+
+
+/* --- 9. Responsive para Móvil --- */
+@media (max-width: 768px) {
+    main#wizard-container {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    button {
+        padding: 0.75rem 1rem;
+    }
+
+    .navigation-buttons {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+    }
+    
+    .navigation-buttons button {
+        width: 100%;
+    }
 }
