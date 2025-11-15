@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (email === '' && telefono === '') {
                     alert('Por favor, introduce al menos un email o un teléfono.');
-                    telefonoInput.focus();
+                    phoneInput.focus();
                     return;
                 }
                 if (email !== '' && !esEmailValido(email)) {
@@ -165,23 +165,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // d) Botón "Añadir Experiencia"
+    // d) Botón "Añadir Experiencia" (¡CON VALIDACIÓN DE FECHAS!)
     addExperienceBtn.addEventListener('click', () => {
         const puesto = expPuesto.value.trim();
         const empresa = expEmpresa.value.trim();
         
+        // 1. Validación de campos obligatorios (la que ya teníamos)
         if (puesto === '' || empresa === '') {
             alert('Por favor, rellena al menos el puesto y la empresa.');
             return;
         }
 
-        const inicio = expInicio.value.trim();
-        const fin = expFin.value.trim();
+        const inicioStr = expInicio.value.trim();
+        const finStr = expFin.value.trim();
         const descripcion = expDescripcion.value.trim();
+
+        // 2. *** ¡NUEVA VALIDACIÓN DE FECHAS! ***
+        // Convertimos a números
+        const inicioNum = parseInt(inicioStr);
+        const finNum = parseInt(finStr);
+
+        // Comprobamos si los campos NO están vacíos Y AMBOS son números
+        // (Esto ignora la palabra "Presente", ya que parseInt("Presente") da NaN)
+        if (inicioStr !== "" && finStr !== "" && !isNaN(inicioNum) && !isNaN(finNum)) {
+            
+            // ¡La comprobación!
+            if (inicioNum > finNum) {
+                alert('Error: El año de inicio no puede ser posterior al año de fin.');
+                expInicio.focus(); // Pone el cursor en el campo erróneo
+                return; // Detiene la ejecución
+            }
+        }
         
-        cvData.experience.push({ puesto, empresa, inicio, fin, descripcion });
+        // 3. Si todo es válido, guardamos
+        cvData.experience.push({ 
+            puesto, 
+            empresa, 
+            inicio: inicioStr, 
+            fin: finStr, 
+            descripcion 
+        });
+        
+        // 4. Renderizar y limpiar
         renderExperienceList();
-        expPuesto.value = ''; expEmpresa.value = ''; expInicio.value = ''; expFin.value = ''; expDescripcion.value = '';
+        expPuesto.value = ''; 
+        expEmpresa.value = ''; 
+        expInicio.value = ''; 
+        expFin.value = ''; 
+        expDescripcion.value = '';
     });
 
     // e) Botón "Añadir Formación"
