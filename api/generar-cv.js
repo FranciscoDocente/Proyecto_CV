@@ -89,7 +89,7 @@ export default async function handler(request, response) {
 
         // 9. LLAMAR A LA IA (¡Con el modelo estable!)
         console.log('[Backend] Contactando a la API de Gemini...');
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // Usamos el modelo estándar
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" }); // Usamos el modelo estándar
         const result = await model.generateContent(prompt);
         const iaResponse = await result.response;
         const generatedDraft = iaResponse.text();

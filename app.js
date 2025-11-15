@@ -256,6 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const institucion = eduInstitucion.value.trim();
         const anioStr = eduAnio.value.trim();
         
+        
         if (titulo === '' || institucion === '' || anioStr === '') {
             alert('Por favor, rellena todos los campos de formación.');
             return;
@@ -269,6 +270,13 @@ document.addEventListener('DOMContentLoaded', () => {
             eduAnio.focus();
             return;
         }
+
+        const dateFinal = edu_anio.value;
+
+        if (dateFinal > hoy) {
+                alert('Error: La fecha de fin no puede ser en el futuro.');
+                dateFinal.focus();
+                return;
         
         cvData.education.push({ titulo, institucion, anio: anioStr });
         renderEducationList();
