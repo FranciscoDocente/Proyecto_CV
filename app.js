@@ -165,35 +165,52 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // d) Botón "Añadir Experiencia" (¡CON VALIDACIÓN DE FECHAS!)
+    // d) Botón "Añadir Experiencia" (¡CON VALIDACIÓN DE FECHAS FUTURAS!)
     addExperienceBtn.addEventListener('click', () => {
         const puesto = expPuesto.value.trim();
         const empresa = expEmpresa.value.trim();
         
-        // 1. Validación de campos obligatorios (la que ya teníamos)
+        // 1. Validación de campos obligatorios
         if (puesto === '' || empresa === '') {
             alert('Por favor, rellena al menos el puesto y la empresa.');
             return;
         }
 
-        const inicioStr = expInicio.value.trim();
-        const finStr = expFin.value.trim();
+        let inicioStr = expInicio.value.trim();
+        let finStr = expFin.value.trim();
         const descripcion = expDescripcion.value.trim();
 
         // 2. *** ¡NUEVA VALIDACIÓN DE FECHAS! ***
-        // Convertimos a números
+        const currentYear = new Date().getFullYear();
         const inicioNum = parseInt(inicioStr);
         const finNum = parseInt(finStr);
 
-        // Comprobamos si los campos NO están vacíos Y AMBOS son números
-        // (Esto ignora la palabra "Presente", ya que parseInt("Presente") da NaN)
-        if (inicioStr !== "" && finStr !== "" && !isNaN(inicioNum) && !isNaN(finNum)) {
+        // 2a. Comprobar si la fecha de fin es futura
+        if (!isNaN(finNum) && finNum > currentYear) {
+            // ¡Usamos confirm() como sugeriste!
+            const fix = confirm(
+                `La fecha de fin ("${finNum}") no puede ser en el futuro.\n\n` +
+                `Pulsa "Aceptar" para cambiarla por "En la actualidad".\n` +
+                `Pulsa "Cancelar" para corregirla manualmente.`
+            );
             
-            // ¡La comprobación!
+            if (fix) {
+                // El usuario pulsa Aceptar
+                finStr = "En la actualidad"; // Corregimos el valor
+                expFin.value = "En la actualidad"; // Lo ponemos en el campo
+            } else {
+                // El usuario pulsa Cancelar
+                expFin.focus(); // Ponemos el cursor en el campo erróneo
+                return; // Detenemos la ejecución
+            }
+        }
+
+        // 2b. Comprobar si la fecha de inicio es posterior a la de fin
+        if (inicioStr !== "" && finStr !== "" && !isNaN(inicioNum) && !isNaN(finNum)) {
             if (inicioNum > finNum) {
                 alert('Error: El año de inicio no puede ser posterior al año de fin.');
-                expInicio.focus(); // Pone el cursor en el campo erróneo
-                return; // Detiene la ejecución
+                expInicio.focus();
+                return;
             }
         }
         
