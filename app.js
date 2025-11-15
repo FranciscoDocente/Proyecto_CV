@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         steps.forEach(step => {
             step.id === stepId ? step.removeAttribute('hidden') : step.setAttribute('hidden', true);
         });
+        window.scrollTo(0, 0);
     }
 
     // --- 5. FUNCIONES DE RENDERIZADO DE LISTAS ---

@@ -156,9 +156,11 @@ button.prev-step-btn:hover {
     padding: 1.5rem;
     text-align: center;
     box-shadow: var(--sombra-tarjeta);
-    display: flex;            /* Activa Flexbox */
-    flex-direction: column;   /* Apila los elementos verticalmente */
-    justify-content: flex-start; /* Alinea todo arriba (por si acaso) */
+
+    display: flex;
+    flex-direction: column;
+    /* ¡LÍNEA MODIFICADA! Esto ancla el botón (card-footer) abajo */
+    justify-content: space-between; 
 }
 
 .template-card h3 {
@@ -282,8 +284,70 @@ button.prev-step-btn:hover {
     margin-bottom: 1rem; /* Espacio entre la imagen y el título */
 }
 
-.template-card button {
-    margin-top: auto; /* ¡Esta es la línea mágica que ancla el botón abajo! */
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+/* --- 9. Estilos para el Borrador (Preview) y el PDF --- */
+
+/* Esta regla le da "aire" al contenido del CV */
+.cv-preview {
+    padding: 2rem;
+}
+
+/* Le decimos que use el color primario (tu rojo) para los títulos */
+.cv-preview h1,
+.cv-preview h2,
+.cv-preview h3 {
+    color: var(--color-primario);
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.cv-preview h1 {
+    font-size: 2.25rem;
+    border-bottom: 2px solid var(--color-borde);
+    padding-bottom: 0.5rem;
+}
+
+.cv-preview h2 {
+    font-size: 1.75rem;
+    border-bottom: 1px solid var(--color-borde);
+    padding-bottom: 0.25rem;
+}
+
+.cv-preview h3 {
+    font-size: 1.25rem;
+}
+
+/* Estilos para el texto normal */
+.cv-preview p,
+.cv-preview li {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-texto);
+}
+
+/* Estilos para las listas (ej. experiencia, formación) */
+.cv-preview ul {
+    list-style-type: disc; /* Círculo estándar */
+    padding-left: 1.5rem; /* Añade sangría */
+    margin-bottom: 1rem;
+}
+
+.cv-preview li {
+    margin-bottom: 0.25rem; /* Espacio entre puntos de la lista */
+}
+
+/* Estilos para la foto (para que se vea bien en el borrador) */
+.cv-preview img {
+    max-width: 150px;
+    border-radius: 50%; /* La hace redonda */
+    object-fit: cover;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* Línea horizontal */
+.cv-preview hr {
+    border: 0;
+    border-top: 2px solid var(--color-borde);
+    margin: 2rem 0;
 }
