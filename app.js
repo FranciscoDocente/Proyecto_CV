@@ -55,6 +55,63 @@ document.addEventListener('DOMContentLoaded', () => {
         return re.test(telefono) && digitos >= 6;
     }
 
+    // Valida fechas de experiencia en vivo y al guardar; devuelve true si son coherentes
+    function validarFechasExperiencia({ mostrarAlertas = false } = {}) {
+        const inicioValue = expInicio.value;
+        const finValue = expFin.value;
+        const esPresente = expPresente.checked;
+        const hoy = new Date();
+
+        // Limpia mensajes previos de validación
+        expInicio.setCustomValidity('');
+        expFin.setCustomValidity('');
+
+        if (!inicioValue) {
+            // No se valida hasta que haya fecha de inicio
+            return true;
+        }
+
+        const inicioDate = new Date(inicioValue);
+        if (inicioDate > hoy) {
+            const msg = 'La fecha de inicio no puede ser en el futuro.';
+            expInicio.setCustomValidity(msg);
+            if (mostrarAlertas) alert(msg);
+            expInicio.reportValidity();
+            return false;
+        }
+
+        if (!esPresente) {
+            if (!finValue) {
+                const msg = 'Introduce una fecha de fin o marca "Sigo trabajando aquí".';
+                expFin.setCustomValidity(msg);
+                if (mostrarAlertas) alert(msg);
+                expFin.reportValidity();
+                return false;
+            }
+
+            const finDate = new Date(finValue);
+            if (finDate > hoy) {
+                const msg = 'La fecha de fin no puede ser en el futuro.';
+                expFin.setCustomValidity(msg);
+                if (mostrarAlertas) alert(msg);
+                expFin.reportValidity();
+                return false;
+            }
+
+            if (inicioDate > finDate) {
+                const msg = 'La fecha de inicio no puede ser posterior a la fecha de fin.';
+                expFin.setCustomValidity(msg);
+                if (mostrarAlertas) alert(msg);
+                expFin.reportValidity();
+                return false;
+            }
+        } else {
+            expFin.setCustomValidity('');
+        }
+
+        return true;
+    }
+
     // --- 4. FUNCIÓN DE NAVEGACIÓN (CON SCROLL) ---
     function showStep(stepId) {
         steps.forEach(step => {
@@ -180,7 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             expFin.disabled = false;
         }
+        validarFechasExperiencia();
     });
+
+    // Validación en tiempo real de fechas de experiencia
+    expInicio.addEventListener('change', () => validarFechasExperiencia());
+    expFin.addEventListener('change', () => validarFechasExperiencia());
 
     // d) Botón "Añadir Experiencia" (Con validación de fecha)
     addExperienceBtn.addEventListener('click', () => {
@@ -203,33 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        const inicioDate = new Date(inicioValue);
-        const hoy = new Date();
-        
-        if (inicioDate > hoy) {
-            alert('Error: La fecha de inicio no puede ser en el futuro.');
-            expInicio.focus();
-            return;
-        }
-
-        if (!esPresente) {
-            const finDate = new Date(finValue);
-            if (finValue === '') {
-                alert('Por favor, introduce una fecha de fin o marca "Sigo trabajando aquí".');
-                expFin.focus();
-                return;
-            }
-            if (finDate > hoy) {
-                alert('Error: La fecha de fin no puede ser en el futuro.');
-                expFin.focus();
-                return;
-            }
-            if (inicioDate > finDate) {
-                alert('Error: La fecha de inicio no puede ser posterior a la fecha de fin.');
-                expInicio.focus();
-                return;
-            }
-        }
+        if (!validarFechasExperiencia({ mostrarAlertas: true })) return;
         
         cvData.experience.push({ 
             puesto, 
