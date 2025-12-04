@@ -271,16 +271,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const dateFinal = edu_anio.value;
-
-        if (dateFinal > hoy) {
-                alert('Error: La fecha de fin no puede ser en el futuro.');
-                dateFinal.focus();
-                return;
-        
         cvData.education.push({ titulo, institucion, anio: anioStr });
         renderEducationList();
-        eduTitulo.value = ''; eduInstitucion.value = ''; eduAnio.value = '';
+        eduTitulo.value = '';
+        eduInstitucion.value = '';
+        eduAnio.value = '';
     });
 
     // f) Botón "Generar Borrador"
